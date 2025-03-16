@@ -25,12 +25,15 @@ class MusicHelper {
     }
   }
 
+  // get storage permissions
+
   Future<bool> getStoragePermission() async {
     if (await Permission.storage.isGranted) {
       return true;
     }
 
     var status = await Permission.storage.request();
+
     if (status.isGranted) {
       return true;
     }
@@ -39,7 +42,44 @@ class MusicHelper {
     if (await Permission.audio.isGranted) {
       return true;
     }
+
     status = await Permission.audio.request();
+
+    // fix me
+    if (await Permission.audio.status.isDenied || // fix me
+        await Permission.audio.status.isPermanentlyDenied) {
+      status;
+    }
+
     return status.isGranted;
   }
 }
+
+//  // check audio storage permission
+
+// class MusicHelperPermissions extends StatefulWidget {
+//   const MusicHelperPermissions({super.key});
+
+//   @override
+//   State<MusicHelperPermissions> createState() => MusicHelperPermissionsState();
+// }
+
+// class MusicHelperPermissionsState extends State<MusicHelperPermissions> {
+//   final MusicHelper musicHelper = MusicHelper();
+//   bool hasPermission = false;
+//   bool isLoading = false;
+
+//   Future<void> checkPermission() async {
+//     setState(() => isLoading = true);
+//     hasPermission = await musicHelper.getStoragePermission();
+//     if (hasPermission) {
+//       await musicHelper.getAllDeviceMusic();
+//     }
+//     setState(() => isLoading = false);
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return const Column();
+//   }
+// }

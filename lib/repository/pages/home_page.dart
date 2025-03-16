@@ -1,7 +1,14 @@
+import 'package:av_music/data/bloc/music_player/music_player_bloc.dart';
+import 'package:av_music/data/bloc/music_player/music_player_events.dart';
+import 'package:av_music/data/bloc/music_player/music_player_state.dart';
 import 'package:av_music/data/music_helper/music_helper.dart';
+import 'package:av_music/domain/utils/app_info.dart';
 import 'package:av_music/domain/utils/assets_path.dart';
+import 'package:av_music/repository/pages/music_details.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomePageMusic extends StatefulWidget {
   const HomePageMusic({super.key});
@@ -23,10 +30,23 @@ class _HomePageMusicState extends State<HomePageMusic> {
 
   Future<void> checkPermission() async {
     setState(() => isLoading = true);
-    hasPermission = await musicHelper.getStoragePermission();
+
+    // For Android 13 and above
+    var audioPermission = await Permission.audio.request();
+    var storagePermission = await Permission.storage.request();
+    var externalStorage = await Permission.manageExternalStorage.request();
+
+    // Check if all permissions are granted
+    hasPermission =
+        audioPermission.isGranted &&
+        (storagePermission.isGranted || externalStorage.isGranted);
+
     if (hasPermission) {
       await musicHelper.getAllDeviceMusic();
+
+      // await Permission.audio.status;
     }
+
     setState(() => isLoading = false);
   }
 
@@ -42,12 +62,15 @@ class _HomePageMusicState extends State<HomePageMusic> {
             children: [
               SvgPicture.asset(
                 color: Theme.of(context).colorScheme.primary,
-                width: 40,
-                height: 40,
+                width: 25,
+                height: 25,
                 AssetsPath.appLogo,
               ),
-              const SizedBox(width: 16),
-              Text("AV Music", style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(width: 14),
+              Text(
+                AppInfo.appName,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             ],
           ),
         ),
@@ -55,30 +78,34 @@ class _HomePageMusicState extends State<HomePageMusic> {
       body: SafeArea(
         child:
             isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator.adaptive())
                 : !hasPermission
                 ? Center(
                   child: Column(
+                    spacing: 16,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(Icons.folder_off, size: 64),
-                      const SizedBox(height: 16),
-                      const Text(
+                      // const SizedBox(height: 16),
+                      Text(
                         'Storage permission is required to access music',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16),
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
-                      const SizedBox(height: 16),
+                      // const SizedBox(height: 16),
                       ElevatedButton.icon(
                         onPressed: checkPermission,
                         icon: const Icon(Icons.folder_open),
-                        label: const Text('Grant Permission'),
+                        label: Text(
+                          'Grant Permission',
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
                       ),
                     ],
                   ),
                 )
                 : musicHelper.allMusicLocalDeviceList.isEmpty
-                ? const Center(
+                ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -86,29 +113,48 @@ class _HomePageMusicState extends State<HomePageMusic> {
                       SizedBox(height: 16),
                       Text(
                         'No music found on device',
-                        style: TextStyle(fontSize: 16),
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
                     ],
                   ),
                 )
-                : ListView.builder(
-                  itemCount: musicHelper.allMusicLocalDeviceList.length,
-                  itemBuilder: (context, index) {
-                    final music = musicHelper.allMusicLocalDeviceList[index];
-                    return ListTile(
-                      leading: const Icon(Icons.music_note),
-                      title: Text(
-                        music.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: Text(
-                        music.artist ?? 'Unknown Artist',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      onTap: () {
-                        // TODO: Implement music player
+                : BlocBuilder<MusicPlayerBloc, MusicPlayerState>(
+                  builder: (context, state) {
+                    return ListView.builder(
+                      itemCount: musicHelper.allMusicLocalDeviceList.length,
+                      itemBuilder: (context, index) {
+                        final music =
+                            musicHelper.allMusicLocalDeviceList[index];
+                        return ListTile(
+                          leading: const Icon(Icons.music_note),
+                          title: Text(
+                            music.title,
+                            maxLines: 1,
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium!.copyWith(fontSize: 16),
+                          ),
+                          subtitle: Text(
+                            music.artist ?? 'Unknown Artist',
+                            maxLines: 1,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          onTap: () {
+                            BlocProvider.of<MusicPlayerBloc>(
+                              context,
+                            ).add(PlayMusicEvent(musicUrl: music.data));
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (context) => MusicDetailsPage(
+                                      musicPlayerModel: music,
+                                    ),
+                              ),
+                            );
+                          },
+                        );
                       },
                     );
                   },
