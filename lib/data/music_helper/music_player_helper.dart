@@ -6,7 +6,7 @@ class MusicPlayerHelper {
   static final player = AudioPlayer();
 
   // manage music play or not at time
-  static bool isPlaying = false;
+  // static bool isPlaying = false;
 
   // progress bar total music value
   static Duration? totalMusicDuration;
@@ -23,13 +23,11 @@ class MusicPlayerHelper {
 
       player.play();
 
-      isPlaying = true;
+      // isPlaying = true;
     } catch (e) {
       log("error when play music : $e");
       throw Exception(e);
     }
-
-    
   }
 
   // get progress bar using package

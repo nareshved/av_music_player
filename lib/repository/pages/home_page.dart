@@ -5,6 +5,7 @@ import 'package:av_music/data/music_helper/music_helper.dart';
 import 'package:av_music/domain/utils/app_info.dart';
 import 'package:av_music/domain/utils/assets_path.dart';
 import 'package:av_music/repository/pages/music_details.dart';
+import 'package:av_music/repository/widgets/music_tile/music_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -125,21 +126,12 @@ class _HomePageMusicState extends State<HomePageMusic> {
                       itemBuilder: (context, index) {
                         final music =
                             musicHelper.allMusicLocalDeviceList[index];
-                        return ListTile(
-                          leading: const Icon(Icons.music_note),
-                          title: Text(
-                            music.title,
-                            maxLines: 1,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.bodyMedium!.copyWith(fontSize: 16),
-                          ),
-                          subtitle: Text(
-                            music.artist ?? 'Unknown Artist',
-                            maxLines: 1,
-                            style: Theme.of(context).textTheme.bodySmall,
-                          ),
-                          onTap: () {
+
+                        return MusicTile(
+                          musicTitle: music.title,
+                          musicSubTitle: music.artist!,
+
+                          musicOnTap: () {
                             BlocProvider.of<MusicPlayerBloc>(
                               context,
                             ).add(PlayMusicEvent(musicUrl: music.data));

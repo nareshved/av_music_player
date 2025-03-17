@@ -7,8 +7,10 @@ mixin MusicPlayerMixins {
     required VoidCallback musicPlayBtn,
     required VoidCallback musicNextBtn,
     required VoidCallback musicPreviousBtn,
+    required playerIcon,
   }) {
     return MusicControllers(
+      playerIcon: playerIcon,
       musicNextBtn: musicNextBtn,
       musicPlayBtn: musicPlayBtn,
       musicPreviousBtn: musicPreviousBtn,

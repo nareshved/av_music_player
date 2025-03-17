@@ -4,6 +4,7 @@ import 'package:av_music/data/bloc/music_player/music_player_bloc.dart';
 import 'package:av_music/data/bloc/music_player/music_player_events.dart';
 import 'package:av_music/data/bloc/music_player/music_player_state.dart';
 import 'package:av_music/data/music_helper/music_player_helper.dart';
+import 'package:av_music/repository/widgets/lottie/player_details_page/lottie_player.dart';
 import 'package:av_music/repository/widgets/mixins/music_mixins/music_player_mixins.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -44,6 +45,7 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
 
   @override
   Widget build(BuildContext context) {
+    final isPage = MediaQuery.sizeOf(context);
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<MusicPlayerBloc, MusicPlayerState>(
@@ -59,31 +61,97 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
             }
             if (state is MusicPlayerLoadedState) {
               return Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ProgressBar(
-                      progress: MusicPlayerHelper.currMusicPosValue,
-                      total:
-                          MusicPlayerHelper.totalMusicDuration ?? Duration.zero,
-                      buffered: MusicPlayerHelper.bufferedMusicPosValue,
-                      onSeek: (newSeekValue) {
-                        state.audioPlayer.seek(newSeekValue);
-                      },
+                    Row(
+                      spacing: 10,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // IconButton(
+                        //   icon: Icon(Icons.arrow_back_ios_new_rounded),
+                        //   onPressed: () => Navigator.pop(context),
+                        // ),
+                        Icon(Icons.arrow_drop_down_rounded),
+                        Text(
+                          "Now Playing....",
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
                     ),
 
-                    myMusicControllers(
-                      musicPlayBtn: () {
-                        if (state.audioPlayer.playing) {
-                          state.audioPlayer.pause();
-                        } else {
-                          state.audioPlayer.play();
-                        }
-                      },
-                      musicNextBtn: () {},
-                      musicPreviousBtn: () {},
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          widget.musicPlayerModel.title,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        Text(
+                          widget.musicPlayerModel.artist ?? "",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ],
                     ),
+
+                    Center(child: MyLottiePlayer()),
+
+                    Container(
+                      width: isPage.width * 0.92,
+                      height: isPage.height * 0.30,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(13),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: ProgressBar(
+                                timeLabelType: TimeLabelType.totalTime,
+                                timeLabelLocation: TimeLabelLocation.sides,
+                                progress: MusicPlayerHelper.currMusicPosValue,
+                                total:
+                                    MusicPlayerHelper.totalMusicDuration ??
+                                    Duration.zero,
+                                buffered:
+                                    MusicPlayerHelper.bufferedMusicPosValue,
+                                onSeek: (newSeekValue) {
+                                  state.audioPlayer.seek(newSeekValue);
+                                },
+                              ),
+                            ),
+
+                            Expanded(
+                              child: myMusicControllers(
+                                playerIcon:
+                                    state.audioPlayer.playing
+                                        ? Icons.pause
+                                        : Icons.play_arrow,
+
+                                musicPlayBtn: () {
+                                  if (state.audioPlayer.playing) {
+                                    state.audioPlayer.pause();
+                                  } else {
+                                    state.audioPlayer.play();
+                                  }
+                                },
+                                musicNextBtn: () {},
+                                musicPreviousBtn: () {},
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // SongAndValume(),
                   ],
                 ),
               );

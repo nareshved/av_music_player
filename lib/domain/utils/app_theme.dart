@@ -7,11 +7,14 @@ final mDarkTheme = ThemeData(
   colorScheme: ColorScheme.dark(
     brightness: Brightness.dark,
     primary: AppColors.primaryColor,
-    primaryContainer: AppColors.bgSecondContainerColor,
-    secondary: AppColors.primarySecondColor,
+    secondary: AppColors.bg2ContainerColor, // other alubum container
+    primaryContainer: AppColors.bgContainerColor, // home conatiner
+    // secondary: AppColors.primarySecondColor,
+    secondaryContainer:
+        AppColors.detailPageContainerColor, // song details circle container
     onSecondary: AppColors.lableColor,
-    surface: AppColors.myBgColor,
-    onSurface: AppColors.fontColor,
+   // surface: AppColors.bgColor,
+    // onSurface: AppColors.fontColor,
   ),
 
   textTheme: TextTheme(
