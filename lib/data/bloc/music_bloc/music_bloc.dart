@@ -1,4 +1,4 @@
-import 'dart:nativewrappers/_internal/vm/lib/developer.dart';
+import 'dart:developer';
 
 import 'package:av_music/data/bloc/music_bloc/music_events.dart';
 import 'package:av_music/data/bloc/music_bloc/music_states.dart';

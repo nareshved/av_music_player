@@ -8,15 +8,7 @@ class PlayMusicEvent extends MusicPlayerEvents {
   PlayMusicEvent({required this.musicUrl});
 }
 
-class MusicProgressEvent extends MusicPlayerEvents {
-  Duration totalMusicDuration, bufferedMusicPosValue, currMusicPosValue;
-
-  MusicProgressEvent({
-    required this.bufferedMusicPosValue,
-    required this.currMusicPosValue,
-    required this.totalMusicDuration,
-  });
-}
+class MusicProgressEvent extends MusicPlayerEvents {}
 
 class PlayPauseMusic extends MusicPlayerEvents {
   AudioPlayer player;

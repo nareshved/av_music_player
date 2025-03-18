@@ -26,14 +26,7 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
   void initState() {
     super.initState();
 
-    BlocProvider.of<MusicPlayerBloc>(context).add(
-      MusicProgressEvent(
-        bufferedMusicPosValue: MusicPlayerHelper.bufferedMusicPosValue,
-        currMusicPosValue: MusicPlayerHelper.currMusicPosValue,
-        totalMusicDuration:
-            MusicPlayerHelper.totalMusicDuration ?? Duration.zero,
-      ),
-    );
+    BlocProvider.of<MusicPlayerBloc>(context).add(MusicProgressEvent());
   }
 
   // @override
@@ -46,9 +39,11 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
   @override
   Widget build(BuildContext context) {
     final isPage = MediaQuery.sizeOf(context);
+    final isSize = MediaQuery.of(context);
     return Scaffold(
       body: SafeArea(
-        child: BlocBuilder<MusicPlayerBloc, MusicPlayerState>(
+        child: BlocConsumer<MusicPlayerBloc, MusicPlayerState>(
+          listener: (context, state) {},
           builder: (context, state) {
             if (state is MusicPlayerLoadingState) {
               return Center(child: CircularProgressIndicator.adaptive());
@@ -82,6 +77,24 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
                       ],
                     ),
 
+                    isSize.orientation == Orientation.portrait
+                        ? QueryArtworkWidget(
+                          artworkFit: BoxFit.cover,
+                          artworkWidth: isPage.width * 0.8,
+                          artworkHeight: isPage.width * 0.6,
+                          id: widget.musicPlayerModel.id,
+                          type: ArtworkType.AUDIO,
+                          artworkBorder: BorderRadius.circular(8),
+                        )
+                        : FittedBox(
+                          fit: BoxFit.cover,
+                          child: QueryArtworkWidget(
+                            id: widget.musicPlayerModel.id,
+                            type: ArtworkType.AUDIO,
+                            artworkBorder: BorderRadius.circular(8),
+                          ),
+                        ),
+
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -114,7 +127,6 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
                           children: [
                             Expanded(
                               child: ProgressBar(
-                                timeLabelType: TimeLabelType.totalTime,
                                 timeLabelLocation: TimeLabelLocation.sides,
                                 progress: MusicPlayerHelper.currMusicPosValue,
                                 total:

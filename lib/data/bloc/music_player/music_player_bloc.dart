@@ -23,11 +23,11 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvents, MusicPlayerState> {
       }
     });
 
-    on<MusicProgressEvent>((event, emit) {
+    on<MusicProgressEvent>((event, emit) async {
       emit(MusicPlayerLoadingState());
 
       try {
-        musicPlayerHelper.getMusicProgress();
+        await musicPlayerHelper.getMusicProgress();
 
         emit(MusicPlayerLoadedState(audioPlayer: musicPlayerHelper.player));
       } catch (e) {

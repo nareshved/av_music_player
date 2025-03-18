@@ -128,6 +128,7 @@ class _HomePageMusicState extends State<HomePageMusic> {
                             musicHelper.allMusicLocalDeviceList[index];
 
                         return MusicTile(
+                          musicForIconsList: music,
                           musicTitle: music.title,
                           musicSubTitle: music.artist!,
 

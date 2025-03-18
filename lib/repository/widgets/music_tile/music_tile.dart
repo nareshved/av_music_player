@@ -1,5 +1,6 @@
 import 'package:av_music/domain/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class MusicTile extends StatelessWidget {
   const MusicTile({
@@ -7,11 +8,13 @@ class MusicTile extends StatelessWidget {
     required this.musicTitle,
     required this.musicSubTitle,
     required this.musicOnTap,
+    required this.musicForIconsList,
   });
 
   final String musicTitle;
   final String musicSubTitle;
   final VoidCallback musicOnTap;
+  final SongModel musicForIconsList;
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +41,25 @@ class MusicTile extends StatelessWidget {
           ).textTheme.labelSmall!.copyWith(color: AppColors.lableColor),
         ),
 
-        leading: Container(
-          width: 26,
-          height: 26,
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondaryContainer,
-            borderRadius: BorderRadius.circular(10),
-          ),
-
-          child: Center(child: Icon(Icons.music_note, color: Colors.grey)),
+        leading: QueryArtworkWidget(
+          id: musicForIconsList.id,
+          type: ArtworkType.AUDIO,
+          artworkWidth: 45,
+          artworkHeight: 45,
+          artworkBorder: BorderRadius.circular(8),
         ),
       ),
     );
   }
 }
+
+// leading: Container(
+//           width: 26,
+//           height: 26,
+//           decoration: BoxDecoration(
+//             color: Theme.of(context).colorScheme.secondaryContainer,
+//             borderRadius: BorderRadius.circular(10),
+//           ),
+
+//           child: Center(child: Icon(Icons.music_note, color: Colors.grey)),
+//         )
