@@ -15,7 +15,7 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvents, MusicPlayerState> {
       try {
         await musicPlayerHelper.playMyMusic(audioUrl: event.musicUrl);
 
-        emit(MusicPlayerLoadedState(audioPlayer: MusicPlayerHelper.player));
+        emit(MusicPlayerLoadedState(audioPlayer: musicPlayerHelper.player));
       } catch (e) {
         log(e.toString());
 
@@ -29,7 +29,20 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvents, MusicPlayerState> {
       try {
         musicPlayerHelper.getMusicProgress();
 
-        emit(MusicPlayerLoadedState(audioPlayer: MusicPlayerHelper.player));
+        emit(MusicPlayerLoadedState(audioPlayer: musicPlayerHelper.player));
+      } catch (e) {
+        log(e.toString());
+        emit(MusicPlayerErrorState(errorMsg: e.toString()));
+      }
+    });
+
+    on<PlayPauseMusic>((event, emit) async {
+      emit(MusicPlayerLoadingState());
+
+      try {
+        await musicPlayerHelper.playPauseMusic(player: event.player);
+
+        emit(MusicPlayerLoadedState(audioPlayer: musicPlayerHelper.player));
       } catch (e) {
         log(e.toString());
         emit(MusicPlayerErrorState(errorMsg: e.toString()));

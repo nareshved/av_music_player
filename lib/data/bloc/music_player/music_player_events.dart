@@ -1,3 +1,5 @@
+import 'package:just_audio/just_audio.dart';
+
 abstract class MusicPlayerEvents {}
 
 class PlayMusicEvent extends MusicPlayerEvents {
@@ -14,4 +16,10 @@ class MusicProgressEvent extends MusicPlayerEvents {
     required this.currMusicPosValue,
     required this.totalMusicDuration,
   });
+}
+
+class PlayPauseMusic extends MusicPlayerEvents {
+  AudioPlayer player;
+
+  PlayPauseMusic({required this.player});
 }

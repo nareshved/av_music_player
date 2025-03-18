@@ -1,12 +1,11 @@
 import 'dart:developer';
-
 import 'package:just_audio/just_audio.dart';
 
 class MusicPlayerHelper {
-  static final player = AudioPlayer();
+  var player = AudioPlayer();
 
   // manage music play or not at time
-  // static bool isPlaying = false;
+  bool isPlaying = false;
 
   // progress bar total music value
   static Duration? totalMusicDuration;
@@ -22,8 +21,6 @@ class MusicPlayerHelper {
       );
 
       player.play();
-
-      // isPlaying = true;
     } catch (e) {
       log("error when play music : $e");
       throw Exception(e);
@@ -44,5 +41,19 @@ class MusicPlayerHelper {
       log("error when get music progress");
       throw Exception(e);
     }
+  }
+
+  Future<void> playPauseMusic({required AudioPlayer player}) async {
+    if (isPlaying) {
+      player.pause();
+      isPlaying = false;
+
+      log(isPlaying.toString());
+    } else {
+      player.play();
+      isPlaying = true;
+      log(isPlaying.toString());
+    }
+    log(isPlaying.toString());
   }
 }

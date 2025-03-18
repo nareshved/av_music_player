@@ -1,5 +1,4 @@
-import 'package:av_music/repository/widgets/music_controllers/music_controllers.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
 mixin MusicPlayerMixins {
   // get music controllers buttons
@@ -7,13 +6,29 @@ mixin MusicPlayerMixins {
     required VoidCallback musicPlayBtn,
     required VoidCallback musicNextBtn,
     required VoidCallback musicPreviousBtn,
-    required playerIcon,
+    required bool isPlaying, // Add this parameter
   }) {
-    return MusicControllers(
-      playerIcon: playerIcon,
-      musicNextBtn: musicNextBtn,
-      musicPlayBtn: musicPlayBtn,
-      musicPreviousBtn: musicPreviousBtn,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        IconButton(
+          onPressed: musicPreviousBtn,
+          icon: Icon(Icons.skip_previous_rounded),
+        ),
+        IconButton(
+          onPressed: musicPlayBtn,
+          icon: Icon(
+            isPlaying
+                ? Icons.pause_rounded
+                : Icons.play_arrow_rounded, // Change icon based on state
+            size: 40,
+          ),
+        ),
+        IconButton(
+          onPressed: musicNextBtn,
+          icon: Icon(Icons.skip_next_rounded),
+        ),
+      ],
     );
   }
 

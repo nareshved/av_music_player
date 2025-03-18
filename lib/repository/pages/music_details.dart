@@ -130,20 +130,17 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
 
                             Expanded(
                               child: myMusicControllers(
-                                playerIcon:
-                                    state.audioPlayer.playing
-                                        ? Icons.pause
-                                        : Icons.play_arrow,
-
                                 musicPlayBtn: () {
-                                  if (state.audioPlayer.playing) {
-                                    state.audioPlayer.pause();
-                                  } else {
-                                    state.audioPlayer.play();
-                                  }
+                                  BlocProvider.of<MusicPlayerBloc>(context).add(
+                                    PlayPauseMusic(player: state.audioPlayer),
+                                  );
                                 },
                                 musicNextBtn: () {},
                                 musicPreviousBtn: () {},
+                                isPlaying:
+                                    state
+                                        .audioPlayer
+                                        .playing, // Add this parameter
                               ),
                             ),
                           ],
