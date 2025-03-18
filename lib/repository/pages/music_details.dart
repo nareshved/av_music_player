@@ -23,12 +23,6 @@ class MusicDetailsPage extends StatefulWidget {
 
 class _MusicDetailsPageState extends State<MusicDetailsPage>
     with MusicPlayerMixins {
-  // @override
-  // void dispose() {
-  //   MusicPlayerHelper().getMusicProgress(audioPlayer: AudioPlayer());
-  //   super.dispose();
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -38,10 +32,17 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
     ).add(MusicProgressEvent(player: AudioPlayer()));
   }
 
+  // @override
+  // void dispose() {
+  //   super.dispose();
+
+  //   MusicPlayerHelper.player.stop();
+  // }
+
   @override
   Widget build(BuildContext context) {
     final isPage = MediaQuery.sizeOf(context);
-    final isSize = MediaQuery.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: BlocBuilder<MusicPlayerBloc, MusicPlayerState>(
@@ -82,24 +83,6 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
                       ],
                     ),
 
-                    isSize.orientation == Orientation.portrait
-                        ? QueryArtworkWidget(
-                          artworkFit: BoxFit.cover,
-                          artworkWidth: isPage.width * 0.8,
-                          artworkHeight: isPage.width * 0.6,
-                          id: widget.musicPlayerModel.id,
-                          type: ArtworkType.AUDIO,
-                          artworkBorder: BorderRadius.circular(8),
-                        )
-                        : FittedBox(
-                          fit: BoxFit.cover,
-                          child: QueryArtworkWidget(
-                            id: widget.musicPlayerModel.id,
-                            type: ArtworkType.AUDIO,
-                            artworkBorder: BorderRadius.circular(8),
-                          ),
-                        ),
-
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -132,6 +115,7 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
                           children: [
                             Expanded(
                               child: ProgressBar(
+                                timeLabelType: TimeLabelType.totalTime,
                                 timeLabelLocation: TimeLabelLocation.sides,
                                 progress: MusicPlayerHelper.currMusicPosValue,
                                 total:
@@ -147,17 +131,20 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
 
                             Expanded(
                               child: myMusicControllers(
-                                musicPlayBtn: () {
-                                  BlocProvider.of<MusicPlayerBloc>(context).add(
-                                    PlayPauseMusic(player: state.audioPlayer),
-                                  );
-                                },
-                                musicNextBtn: () {},
-                                musicPreviousBtn: () {},
                                 isPlaying:
                                     state
                                         .audioPlayer
                                         .playing, // Add this parameter
+
+                                musicPlayBtn: () {
+                                  if (state.audioPlayer.playing) {
+                                    state.audioPlayer.pause();
+                                  } else {
+                                    state.audioPlayer.play();
+                                  }
+                                },
+                                musicNextBtn: () {},
+                                musicPreviousBtn: () {},
                               ),
                             ),
                           ],
