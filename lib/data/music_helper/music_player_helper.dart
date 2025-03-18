@@ -19,7 +19,7 @@ class MusicPlayerHelper {
       totalMusicDuration = await player.setAudioSource(
         AudioSource.uri(Uri.parse(audioUrl)),
       );
-      getMusicProgress();
+      // getMusicProgress(audioPlayer: );
       player.play();
     } catch (e) {
       log("error when play music : $e");
@@ -28,8 +28,8 @@ class MusicPlayerHelper {
   }
 
   // get progress bar using package
-
-  getMusicProgress() {
+  // this audioPlayer for update music duration in ui real time
+  getMusicProgress({required AudioPlayer audioPlayer}) {
     try {
       player.positionStream.listen((event) {
         currMusicPosValue = event;
@@ -48,14 +48,10 @@ class MusicPlayerHelper {
       if (isPlaying) {
         player.pause();
         isPlaying = false;
-
-        log(isPlaying.toString());
       } else {
         player.play();
         isPlaying = true;
-        log(isPlaying.toString());
       }
-      log(isPlaying.toString());
     } catch (e) {
       log("error when get playPauseMusic");
       throw Exception(e);

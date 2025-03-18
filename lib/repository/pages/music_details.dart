@@ -8,6 +8,7 @@ import 'package:av_music/repository/widgets/lottie/player_details_page/lottie_pl
 import 'package:av_music/repository/widgets/mixins/music_mixins/music_player_mixins.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 
@@ -22,19 +23,20 @@ class MusicDetailsPage extends StatefulWidget {
 
 class _MusicDetailsPageState extends State<MusicDetailsPage>
     with MusicPlayerMixins {
+  // @override
+  // void dispose() {
+  //   MusicPlayerHelper().getMusicProgress(audioPlayer: AudioPlayer());
+  //   super.dispose();
+  // }
+
   @override
   void initState() {
     super.initState();
 
-    BlocProvider.of<MusicPlayerBloc>(context).add(MusicProgressEvent());
+    BlocProvider.of<MusicPlayerBloc>(
+      context,
+    ).add(MusicProgressEvent(player: AudioPlayer()));
   }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-
-  //   MusicPlayerHelper.player.stop();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +44,7 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
     final isSize = MediaQuery.of(context);
     return Scaffold(
       body: SafeArea(
-        child: BlocConsumer<MusicPlayerBloc, MusicPlayerState>(
-          listener: (context, state) {},
+        child: BlocBuilder<MusicPlayerBloc, MusicPlayerState>(
           builder: (context, state) {
             if (state is MusicPlayerLoadingState) {
               return Center(child: CircularProgressIndicator.adaptive());
@@ -55,6 +56,10 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
               ).showSnackBar(SnackBar(content: Text(state.errorMsg)));
             }
             if (state is MusicPlayerLoadedState) {
+              // this MusicProgressEvent for update music duration in ui real time
+              BlocProvider.of<MusicPlayerBloc>(
+                context,
+              ).add(MusicProgressEvent(player: state.audioPlayer));
               return Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(

@@ -8,7 +8,11 @@ class PlayMusicEvent extends MusicPlayerEvents {
   PlayMusicEvent({required this.musicUrl});
 }
 
-class MusicProgressEvent extends MusicPlayerEvents {}
+class MusicProgressEvent extends MusicPlayerEvents {
+   AudioPlayer player;
+
+  MusicProgressEvent({required this.player});
+}
 
 class PlayPauseMusic extends MusicPlayerEvents {
   AudioPlayer player;
