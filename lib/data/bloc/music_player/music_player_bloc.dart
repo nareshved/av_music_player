@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:av_music/data/bloc/music_player/music_player_events.dart';
 import 'package:av_music/data/bloc/music_player/music_player_state.dart';
 import 'package:av_music/data/music_helper/music_player_helper.dart';

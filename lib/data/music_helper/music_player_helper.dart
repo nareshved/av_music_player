@@ -45,15 +45,22 @@ class MusicPlayerHelper {
 
   Future<void> playPauseMusic({required AudioPlayer player}) async {
     try {
-      if (isPlaying) {
+      if (player.playing) {
         player.pause();
-        isPlaying = false;
+        // isPlaying = false;
       } else {
         player.play();
-        isPlaying = true;
+        // isPlaying = true;
       }
     } catch (e) {
       log("error when get playPauseMusic");
+      throw Exception(e);
+    }
+  }
+
+  Future<void> playNextMusic() async {
+    try {} catch (e) {
+      log("error when play next music");
       throw Exception(e);
     }
   }
