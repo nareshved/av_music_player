@@ -7,6 +7,8 @@ class MusicHelper {
       []; // all songs add to this after fetch
   final OnAudioQuery _audioQuery = OnAudioQuery();
 
+ 
+
   Future<void> getAllDeviceMusic() async {
     try {
       allMusicLocalDeviceList = await _audioQuery.querySongs(
@@ -15,7 +17,7 @@ class MusicHelper {
         uriType: UriType.EXTERNAL,
         ignoreCase: true,
       );
-
+            // allMusics = allMusicLocalDeviceList;  // save this list for next or previos song play
       log(allMusicLocalDeviceList.length.toString());
       // log(allMusicLocalDeviceList[0].title);
     } catch (e) {

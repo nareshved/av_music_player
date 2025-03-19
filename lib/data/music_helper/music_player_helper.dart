@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:just_audio/just_audio.dart';
+import 'package:on_audio_query/on_audio_query.dart';
 
 class MusicPlayerHelper {
   var player = AudioPlayer();
@@ -58,9 +59,28 @@ class MusicPlayerHelper {
     }
   }
 
-  Future<void> playNextMusic() async {
-    try {} catch (e) {
+  Future<void> playNextMusic({
+    required int mIndex,
+    required List<SongModel> allMusicsList,
+  }) async {
+    try {
+      if (mIndex == allMusicsList.length - 1) {
+        allMusicsList[mIndex + 1];
+      } else {
+        log("list index out of is ${mIndex.toString()}");
+      }
+    } catch (e) {
       log("error when play next music");
+      throw Exception(e);
+    }
+  }
+
+  Future<void> playPrevMusic({
+    required int mIndex,
+    required List<SongModel> allMusicsList,
+  }) async {
+    try {} catch (e) {
+      log("error when play previous music");
       throw Exception(e);
     }
   }
