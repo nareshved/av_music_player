@@ -13,6 +13,14 @@ class MusicPlayerHelper {
   static Duration bufferedMusicPosValue = Duration.zero;
   static Duration currMusicPosValue = Duration.zero;
 
+  // for next or previous music
+  static int currentIndex = 0;
+  static List<SongModel> playlist = [];
+
+  // for update music title in details page when play next or previous music
+
+  static String? musicTitle, musicArtistName;
+
   // play music
 
   Future<void> playMyMusic({required String audioUrl}) async {
@@ -21,6 +29,9 @@ class MusicPlayerHelper {
         AudioSource.uri(Uri.parse(audioUrl)),
       );
       // getMusicProgress(audioPlayer: );
+
+      // get titele for next or prev music
+
       player.play();
     } catch (e) {
       log("error when play music : $e");
@@ -59,29 +70,62 @@ class MusicPlayerHelper {
     }
   }
 
-  Future<void> playNextMusic({
-    required int mIndex,
-    required List<SongModel> allMusicsList,
-  }) async {
-    try {
-      if (mIndex == allMusicsList.length - 1) {
-        allMusicsList[mIndex + 1];
-      } else {
-        log("list index out of is ${mIndex.toString()}");
+  // Future<void> playNextMusic({
+  //   required int mIndex,
+  //   required List<SongModel> allMusicsList,
+  // }) async {
+  //   try {
+  //     if (mIndex == allMusicsList.length - 1) {
+  //       allMusicsList[mIndex + 1];
+  //     } else {
+  //       log("list index out of is ${mIndex.toString()}");
+  //     }
+  //   } catch (e) {
+  //     log("error when play next music");
+  //     throw Exception(e);
+  //   }
+  // }
+
+  // Future<void> playPrevMusic({
+  //   required int mIndex,
+  //   required List<SongModel> allMusicsList,
+  // }) async {
+  //   try {} catch (e) {
+  //     log("error when play previous music");
+  //     throw Exception(e);
+  //   }
+  // }
+
+  static void playNext(AudioPlayer audioPlayer) async {
+    if (currentIndex < playlist.length - 1) {
+      currentIndex++;
+      final nextSong = playlist[currentIndex];
+      final uri = nextSong.uri;
+
+      // update in details page
+      musicTitle = nextSong.title;
+      musicArtistName = nextSong.artist;
+
+      if (uri != null) {
+        await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri)));
+        await audioPlayer.play();
       }
-    } catch (e) {
-      log("error when play next music");
-      throw Exception(e);
     }
   }
 
-  Future<void> playPrevMusic({
-    required int mIndex,
-    required List<SongModel> allMusicsList,
-  }) async {
-    try {} catch (e) {
-      log("error when play previous music");
-      throw Exception(e);
+  static void playPrevious(AudioPlayer audioPlayer) async {
+    if (currentIndex > 0) {
+      currentIndex--;
+      final previousSong = playlist[currentIndex];
+      final uri = previousSong.uri;
+
+      // update in details page
+      musicTitle = previousSong.title;
+      musicArtistName = previousSong.artist;
+      if (uri != null) {
+        await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri)));
+        await audioPlayer.play();
+      }
     }
   }
 }

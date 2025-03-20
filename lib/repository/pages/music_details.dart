@@ -13,9 +13,11 @@ import 'package:on_audio_query/on_audio_query.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 
 class MusicDetailsPage extends StatefulWidget {
-  const MusicDetailsPage({super.key, required this.musicPlayerModel});
+  MusicDetailsPage({super.key, required this.musicPlayerModel});
 
   final SongModel musicPlayerModel;
+
+  bool userChangeMusic = false;
 
   @override
   State<MusicDetailsPage> createState() => _MusicDetailsPageState();
@@ -27,17 +29,26 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
   void initState() {
     super.initState();
 
+    // Initialize the playlist
+    final audioQuery = OnAudioQuery();
+    audioQuery
+        .querySongs(
+          sortType: SongSortType.TITLE,
+          orderType: OrderType.ASC_OR_SMALLER,
+          uriType: UriType.EXTERNAL,
+        )
+        .then((songs) {
+          MusicPlayerHelper.playlist = songs;
+          // Find current song index
+          MusicPlayerHelper.currentIndex = songs.indexWhere(
+            (song) => song.id == widget.musicPlayerModel.id,
+          );
+        });
+
     BlocProvider.of<MusicPlayerBloc>(
       context,
     ).add(MusicProgressEvent(player: AudioPlayer()));
   }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-
-  //   MusicPlayerHelper.player.stop();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -87,12 +98,16 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          widget.musicPlayerModel.title,
+                          widget.userChangeMusic
+                              ? MusicPlayerHelper.musicTitle!
+                              : widget.musicPlayerModel.title,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         Text(
-                          widget.musicPlayerModel.artist ?? "",
+                          widget.userChangeMusic
+                              ? MusicPlayerHelper.musicTitle!
+                              : widget.musicPlayerModel.artist ?? "",
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.labelSmall,
                         ),
@@ -131,11 +146,7 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
 
                             Expanded(
                               child: myMusicControllers(
-                                isPlaying:
-                                    state
-                                        .audioPlayer
-                                        .playing, // Add this parameter
-
+                                isPlaying: state.audioPlayer.playing,
                                 musicPlayBtn: () {
                                   if (state.audioPlayer.playing) {
                                     state.audioPlayer.pause();
@@ -143,8 +154,16 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
                                     state.audioPlayer.play();
                                   }
                                 },
-                                musicNextBtn: () {},
-                                musicPreviousBtn: () {},
+                                musicNextBtn: () {
+                                  widget.userChangeMusic = true;
+                                  MusicPlayerHelper.playNext(state.audioPlayer);
+                                },
+                                musicPreviousBtn: () {
+                                  widget.userChangeMusic = true;
+                                  MusicPlayerHelper.playPrevious(
+                                    state.audioPlayer,
+                                  );
+                                },
                               ),
                             ),
                           ],
