@@ -19,12 +19,21 @@ class MusicDetailsPage extends StatefulWidget {
 
   bool userChangeMusic = false;
 
+  // for dispose player
+  AudioPlayer? player;
+
   @override
   State<MusicDetailsPage> createState() => _MusicDetailsPageState();
 }
 
 class _MusicDetailsPageState extends State<MusicDetailsPage>
     with MusicPlayerMixins {
+  @override
+  void dispose() {
+    super.dispose();
+    widget.player;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -39,10 +48,11 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
         )
         .then((songs) {
           MusicPlayerHelper.playlist = songs;
-          // Find current song index
+          // Find current song index and set current song
           MusicPlayerHelper.currentIndex = songs.indexWhere(
             (song) => song.id == widget.musicPlayerModel.id,
           );
+          MusicPlayerHelper.currentSong = widget.musicPlayerModel;
         });
 
     BlocProvider.of<MusicPlayerBloc>(
@@ -68,6 +78,9 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
               ).showSnackBar(SnackBar(content: Text(state.errorMsg)));
             }
             if (state is MusicPlayerLoadedState) {
+              // for dispose my player
+              widget.player = state.audioPlayer;
+
               // this MusicProgressEvent for update music duration in ui real time
               BlocProvider.of<MusicPlayerBloc>(
                 context,
@@ -98,16 +111,15 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          widget.userChangeMusic
-                              ? MusicPlayerHelper.musicTitle!
-                              : widget.musicPlayerModel.title,
+                          MusicPlayerHelper.currentSong?.title ??
+                              widget.musicPlayerModel.title,
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         Text(
-                          widget.userChangeMusic
-                              ? MusicPlayerHelper.musicTitle!
-                              : widget.musicPlayerModel.artist ?? "",
+                          MusicPlayerHelper.currentSong?.artist ??
+                              widget.musicPlayerModel.artist ??
+                              "",
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.labelSmall,
                         ),
@@ -156,12 +168,18 @@ class _MusicDetailsPageState extends State<MusicDetailsPage>
                                 },
                                 musicNextBtn: () {
                                   widget.userChangeMusic = true;
-                                  MusicPlayerHelper.playNext(state.audioPlayer);
+                                  BlocProvider.of<MusicPlayerBloc>(context).add(
+                                    PlayNextMusicEvent(
+                                      player: state.audioPlayer,
+                                    ),
+                                  );
                                 },
                                 musicPreviousBtn: () {
                                   widget.userChangeMusic = true;
-                                  MusicPlayerHelper.playPrevious(
-                                    state.audioPlayer,
+                                  BlocProvider.of<MusicPlayerBloc>(context).add(
+                                    PlayPreviousMusicEvent(
+                                      player: state.audioPlayer,
+                                    ),
                                   );
                                 },
                               ),

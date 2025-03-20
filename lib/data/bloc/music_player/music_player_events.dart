@@ -9,7 +9,7 @@ class PlayMusicEvent extends MusicPlayerEvents {
 }
 
 class MusicProgressEvent extends MusicPlayerEvents {
-   AudioPlayer player;
+  AudioPlayer player;
 
   MusicProgressEvent({required this.player});
 }
@@ -18,4 +18,16 @@ class PlayPauseMusic extends MusicPlayerEvents {
   AudioPlayer player;
 
   PlayPauseMusic({required this.player});
+}
+
+class PlayNextMusicEvent extends MusicPlayerEvents {
+  AudioPlayer player;
+
+  PlayNextMusicEvent({required this.player});
+}
+
+class PlayPreviousMusicEvent extends MusicPlayerEvents {
+  AudioPlayer player;
+
+  PlayPreviousMusicEvent({required this.player});
 }

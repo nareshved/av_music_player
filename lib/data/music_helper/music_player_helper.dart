@@ -16,10 +16,11 @@ class MusicPlayerHelper {
   // for next or previous music
   static int currentIndex = 0;
   static List<SongModel> playlist = [];
+  static SongModel? currentSong;
 
   // for update music title in details page when play next or previous music
 
-  static String? musicTitle, musicArtistName;
+  // static String? musicTitle, musicArtistName;
 
   // play music
 
@@ -96,36 +97,37 @@ class MusicPlayerHelper {
   //   }
   // }
 
-  static void playNext(AudioPlayer audioPlayer) async {
-    if (currentIndex < playlist.length - 1) {
-      currentIndex++;
-      final nextSong = playlist[currentIndex];
-      final uri = nextSong.uri;
-
-      // update in details page
-      musicTitle = nextSong.title;
-      musicArtistName = nextSong.artist;
-
-      if (uri != null) {
-        await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri)));
-        await audioPlayer.play();
+  Future<void> playNextMusic(AudioPlayer audioPlayer) async {
+    try {
+      if (currentIndex < playlist.length - 1) {
+        currentIndex++;
+        currentSong = playlist[currentIndex];
+        final uri = currentSong?.uri;
+        if (uri != null) {
+          await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri)));
+          await audioPlayer.play();
+        }
       }
+    } catch (e) {
+      log("error when play next music");
+      throw Exception(e);
     }
   }
 
-  static void playPrevious(AudioPlayer audioPlayer) async {
-    if (currentIndex > 0) {
-      currentIndex--;
-      final previousSong = playlist[currentIndex];
-      final uri = previousSong.uri;
-
-      // update in details page
-      musicTitle = previousSong.title;
-      musicArtistName = previousSong.artist;
-      if (uri != null) {
-        await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri)));
-        await audioPlayer.play();
+  Future<void> playPreviousMusic(AudioPlayer audioPlayer) async {
+    try {
+      if (currentIndex > 0) {
+        currentIndex--;
+        currentSong = playlist[currentIndex];
+        final uri = currentSong?.uri;
+        if (uri != null) {
+          await audioPlayer.setAudioSource(AudioSource.uri(Uri.parse(uri)));
+          await audioPlayer.play();
+        }
       }
+    } catch (e) {
+      log("error when play previous music");
+      throw Exception(e);
     }
   }
 }

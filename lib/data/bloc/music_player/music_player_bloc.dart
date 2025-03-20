@@ -47,5 +47,29 @@ class MusicPlayerBloc extends Bloc<MusicPlayerEvents, MusicPlayerState> {
         emit(MusicPlayerErrorState(errorMsg: e.toString()));
       }
     });
+
+    on<PlayNextMusicEvent>((event, emit) async {
+      emit(MusicPlayerLoadingState());
+
+      try {
+        await musicPlayerHelper.playNextMusic(event.player);
+        emit(MusicPlayerLoadedState(audioPlayer: musicPlayerHelper.player));
+      } catch (e) {
+        log(e.toString());
+        emit(MusicPlayerErrorState(errorMsg: e.toString()));
+      }
+    });
+
+    on<PlayPreviousMusicEvent>((event, emit) async {
+      emit(MusicPlayerLoadingState());
+
+      try {
+        await musicPlayerHelper.playPreviousMusic(event.player);
+        emit(MusicPlayerLoadedState(audioPlayer: musicPlayerHelper.player));
+      } catch (e) {
+        log(e.toString());
+        emit(MusicPlayerErrorState(errorMsg: e.toString()));
+      }
+    });
   }
 }
