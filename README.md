@@ -6,6 +6,13 @@ A new Flutter project.
 
 This project is a starting point for a Flutter application.
 
+📁 Packages 
+  cupertino_icons: ^1.0.2
+  flutter_svg: ^2.0.7
+  on_audio_query: ^2.9.0
+  permission_handler: ^11.0.1
+  just_audio: ^0.9.35
+
 A few resources to get you started if this is your first Flutter project:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
